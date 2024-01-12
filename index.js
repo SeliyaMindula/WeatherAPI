@@ -124,37 +124,39 @@ const sendEmail = async (to, subject, text) => {
     }
 };
 
+module.exports = app;
+
 
 // Cron Job
-cron.schedule('* * * * *', async () => {
-    // cron.schedule('0 */3 * * *', async() => { 
-    console.log('Running a task every 3 hours to update weather data and send reports');
+// cron.schedule('* * * * *', async () => {
+//     cron.schedule('0 */3 * * *', async() => { 
+//     console.log('Running a task every 3 hours to update weather data and send reports');
 
-    try {
-        const users = await User.find({});
+//     try {
+//         const users = await User.find({});
 
-        for (const user of users) {
-            try {
-                const apiKey = process.env.OPENWEATHERMAP_API_KEY;
-                const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${user.location}&appid=${apiKey}&units=metric`);
+//         for (const user of users) {
+//             try {
+//                 const apiKey = process.env.OPENWEATHERMAP_API_KEY;
+//                 const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${user.location}&appid=${apiKey}&units=metric`);
 
-                const weatherData = {
-                    date: new Date(),
-                    weather: response.data
-                };
+//                 const weatherData = {
+//                     date: new Date(),
+//                     weather: response.data
+//                 };
 
-                user.weatherData.push(weatherData);
-                await user.save();
+//                 user.weatherData.push(weatherData);
+//                 await user.save();
 
 
-                const emailText = formatWeatherData(weatherData.weather);
-                await sendEmail(user.email, 'Hourly Weather Report', emailText);
+//                 const emailText = formatWeatherData(weatherData.weather);
+//                 await sendEmail(user.email, 'Hourly Weather Report', emailText);
 
-            } catch (error) {
-                console.error(`Failed for user ${user._id}:`, error);
-            }
-        }
-    } catch (error) {
-        console.error('Cron job failed:', error);
-    }
-});
+//             } catch (error) {
+//                 console.error(`Failed for user ${user._id}:`, error);
+//             }
+//         }
+//     } catch (error) {
+//         console.error('Cron job failed:', error);
+//     }
+// });
