@@ -76,18 +76,14 @@ app.get('/users/:userId/weather', async (req, res) => {
         }
 
         const apiKey = process.env.OPENWEATHERMAP_API_KEY;
-        // Make sure to define `response` inside the try block
         const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${user.location}&appid=${apiKey}&units=metric`);
 
-        // Use `response` here right after it's defined
         const formattedWeather = formatWeatherData(response.data);
-        res.send(formattedWeather);
+        res.send(formattedWeather); // Ensure only one res.send() is used within the try block
     } catch (error) {
-        // Log the error and send a response
         console.error(error);
         res.status(500).send('Server error');
     }
-    // Do not use `response` outside the block where it's defined
 });
 
 // Start the server
@@ -125,34 +121,34 @@ module.exports = app;
 
 // Cron Job
 // cron.schedule('* * * * *', async () => {
-//     cron.schedule('0 */3 * * *', async() => { 
-//     console.log('Running a task every 3 hours to update weather data and send reports');
+    cron.schedule('0 */3 * * *', async() => { 
+    console.log('Running a task every 3 hours to update weather data and send reports');
 
-//     try {
-//         const users = await User.find({});
+    try {
+        const users = await User.find({});
 
-//         for (const user of users) {
-//             try {
-//                 const apiKey = process.env.OPENWEATHERMAP_API_KEY;
-//                 const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${user.location}&appid=${apiKey}&units=metric`);
+        for (const user of users) {
+            try {
+                const apiKey = process.env.OPENWEATHERMAP_API_KEY;
+                const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${user.location}&appid=${apiKey}&units=metric`);
 
-//                 const weatherData = {
-//                     date: new Date(),
-//                     weather: response.data
-//                 };
+                const weatherData = {
+                    date: new Date(),
+                    weather: response.data
+                };
 
-//                 user.weatherData.push(weatherData);
-//                 await user.save();
+                user.weatherData.push(weatherData);
+                await user.save();
 
 
-//                 const emailText = formatWeatherData(weatherData.weather);
-//                 await sendEmail(user.email, 'Hourly Weather Report', emailText);
+                const emailText = formatWeatherData(weatherData.weather);
+                await sendEmail(user.email, 'Hourly Weather Report', emailText);
 
-//             } catch (error) {
-//                 console.error(`Failed for user ${user._id}:`, error);
-//             }
-//         }
-//     } catch (error) {
-//         console.error('Cron job failed:', error);
-//     }
-// });
+            } catch (error) {
+                console.error(`Failed for user ${user._id}:`, error);
+            }
+        }
+    } catch (error) {
+        console.error('Cron job failed:', error);
+    }
+});
