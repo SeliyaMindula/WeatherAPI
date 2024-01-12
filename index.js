@@ -72,12 +72,11 @@ app.get('/users/:userId/weather', async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
         if (!user) {
-            return res.status(404).send();
+            return res.status(404).send('User not found');
         }
 
         const apiKey = process.env.OPENWEATHERMAP_API_KEY;
         const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${user.location}&appid=${apiKey}&units=metric`);
-
 
         const newWeatherData = {
             date: new Date(),
@@ -86,12 +85,13 @@ app.get('/users/:userId/weather', async (req, res) => {
         user.weatherData.push(newWeatherData);
         await user.save();
 
-        res.send(newWeatherData);
+        // Format the weather data before sending the response
+        const formattedWeather = formatWeatherData(response.data);
+        res.send(formattedWeather); // Send the formatted weather data as the response
     } catch (error) {
-        res.status(500).send(error);
+        console.error(error);
+        res.status(500).send('Server error');
     }
-    const formattedWeather = formatWeatherData(response.data);
-    res.send(formattedWeather);
 });
 
 // Start the server
