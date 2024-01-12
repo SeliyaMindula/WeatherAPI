@@ -5,6 +5,14 @@
       {
         "src": "./index.js",
         "use": "@vercel/node"
+      },
+      {
+        "src": "./models/models.js",
+        "use": "@vercel/node"
+      },
+      {
+           "src": "./cron/cronjob.js",
+           "use": "@vercel/node"
       }
     ],
     "routes": [
