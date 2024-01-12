@@ -76,22 +76,18 @@ app.get('/users/:userId/weather', async (req, res) => {
         }
 
         const apiKey = process.env.OPENWEATHERMAP_API_KEY;
+        // Make sure to define `response` inside the try block
         const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${user.location}&appid=${apiKey}&units=metric`);
 
-        const newWeatherData = {
-            date: new Date(),
-            weather: response.data
-        };
-        user.weatherData.push(newWeatherData);
-        await user.save();
-
-        // Format the weather data before sending the response
+        // Use `response` here right after it's defined
         const formattedWeather = formatWeatherData(response.data);
-        res.send(formattedWeather); // Send the formatted weather data as the response
+        res.send(formattedWeather);
     } catch (error) {
+        // Log the error and send a response
         console.error(error);
         res.status(500).send('Server error');
     }
+    // Do not use `response` outside the block where it's defined
 });
 
 // Start the server
