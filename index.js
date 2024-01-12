@@ -75,7 +75,7 @@ app.get('/users/:userId/weather', async (req, res) => {
             return res.status(404).send();
         }
 
-        const apiKey = process.env.OPENWEATHERMAP_API_KEY;
+        const apiKey = OPENWEATHERMAP_API_KEY;
         const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${user.location}&appid=${apiKey}&units=metric`);
 
 
